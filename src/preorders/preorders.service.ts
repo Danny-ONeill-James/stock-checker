@@ -104,6 +104,12 @@ export class PreordersService {
       .set({ hasBeenCommunicated: true })
       .execute();
 
+    preorders.forEach(async (preorder) => {
+      // Save the preorder entity to the database
+      const createdPreorder = await this.preorderRepository.save(preorder);
+      console.log('Added Preorder: ', createdPreorder);
+    });
+
     return preorders;
   }
 }
