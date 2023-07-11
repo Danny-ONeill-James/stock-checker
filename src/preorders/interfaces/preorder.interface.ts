@@ -1,5 +1,5 @@
-export class CreatePreorderDto {
-  id?: string;
+export interface IPreorder {
+  id: string;
   title: string;
   firestormLink: string;
   game: string;
