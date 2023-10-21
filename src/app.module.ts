@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PreordersModule } from './preorders/preorders.module';
-import { DiscordBotModule } from './discord-bot/discord-bot.module';
+import { DiscordModule } from './discord/discord.module';
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { DiscordBotModule } from './discord-bot/discord-bot.module';
     }),
     ScheduleModule.forRoot(),
     PreordersModule,
-    DiscordBotModule,
+    DiscordModule,
   ],
   controllers: [AppController],
   providers: [AppService],
