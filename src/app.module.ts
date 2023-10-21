@@ -1,11 +1,12 @@
+import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DiscordConfigService } from './bot/discord.config.services';
 import { PreordersModule } from './preorders/preorders.module';
-import { DiscordModule } from './discord/discord.module';
 
 @Module({
   imports: [
@@ -22,7 +23,9 @@ import { DiscordModule } from './discord/discord.module';
     }),
     ScheduleModule.forRoot(),
     PreordersModule,
-    DiscordModule,
+    DiscordModule.forRootAsync({
+      useClass: DiscordConfigService,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

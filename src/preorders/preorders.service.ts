@@ -14,7 +14,7 @@ export class PreordersService {
     private preorderRepository: Repository<PreorderEntity>,
   ) {}
 
-  @Cron(CronExpression.EVERY_10_MINUTES, {
+  @Cron(CronExpression.EVERY_MINUTE, {
     name: 'getPreordersCron',
   })
   async getPreordersCron() {
