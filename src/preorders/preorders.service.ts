@@ -18,7 +18,7 @@ export class PreordersService {
     name: 'getPreordersCron',
   })
   async getPreordersCron() {
-    console.log('Run CronJob');
+    console.log('Run CronJob ', new Date());
     await this.getFirestormPreorders();
   }
 
