@@ -24,7 +24,7 @@ export class PreorderEntity {
   @Column()
   image: string;
 
-  @Column()
+  @Column({ default: false })
   hasBeenCommunicated: boolean;
 
   @CreateDateColumn()

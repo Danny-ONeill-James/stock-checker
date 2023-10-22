@@ -18,8 +18,32 @@ export class PreordersService {
     name: 'getPreordersCron',
   })
   async getPreordersCron() {
-    console.log('Run CronJob');
+    console.log('Run CronJob ', new Date());
     await this.getFirestormPreorders();
+  }
+
+  async getPreorders(): Promise<IPreorder[]> {
+    const preorders: IPreorder[] = await this.preorderRepository.find({
+      where: { deletedAt: IsNull() },
+    });
+
+    return preorders;
+  }
+
+  async GetNewPreorders(): Promise<IPreorder[]> {
+    const newPreorders: IPreorder[] = await this.preorderRepository.find({
+      where: { hasBeenCommunicated: false },
+    });
+
+    return newPreorders;
+  }
+
+  async GetNewPreordersForGame(game: string): Promise<IPreorder[]> {
+    const newPreorders: IPreorder[] = await this.preorderRepository.find({
+      where: { hasBeenCommunicated: false, game },
+    });
+
+    return newPreorders;
   }
 
   async getFirestormPreorders(): Promise<CreatePreorderDto[]> {
@@ -98,12 +122,6 @@ export class PreordersService {
       .whereInIds(fullDatabase.map((item) => item.id))
       .execute();
 
-    await this.preorderRepository
-      .createQueryBuilder()
-      .update(PreorderEntity)
-      .set({ hasBeenCommunicated: true })
-      .execute();
-
     preorders.forEach(async (preorder) => {
       // Save the preorder entity to the database
       const createdPreorder = await this.preorderRepository.save(preorder);
@@ -111,5 +129,9 @@ export class PreordersService {
     });
 
     return preorders;
+  }
+
+  updatePredorderHasBeenCommunicated(id: string) {
+    return this.preorderRepository.update(id, { hasBeenCommunicated: true });
   }
 }
