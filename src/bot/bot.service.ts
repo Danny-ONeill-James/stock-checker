@@ -53,10 +53,8 @@ export class BotService {
 
   async HourlyCheck(game: string) {
     console.log('Hourly Check');
-    //Check Database for new preorders
     const newPreorders: IPreorder[] =
       await this.CheckDatabaseForNewPreordersForGame(game);
-    //if there are new preorders, send a message to the discord channel
 
     if (newPreorders.length >= 0) {
       this.PostMessageToDiscord(newPreorders);
@@ -77,7 +75,7 @@ export class BotService {
   }
 
   PostMessageToDiscord(preorders: IPreorder[]) {
-    let WarhammerBuyAndSellChannel = process.env.DISCORD_GUILD_ID;
+    const WarhammerBuyAndSellChannel = process.env.DISCORD_GUILD_ID;
     console.log('Channel Id: ', WarhammerBuyAndSellChannel);
 
     preorders.forEach((preorder) => {
@@ -91,13 +89,13 @@ export class BotService {
         )
 
         .setAuthor({
-          name: 'New Preorder Available',
+          name: 'More From Games Bot',
           iconURL:
             'https://res.cloudinary.com/deftmtx9e/image/upload/v1676545362/More%20From%20Games/siteLogo/mark_dulotp.png',
           url: 'https://morefromgames.com/',
         })
         .setDescription(
-          `A new preorder for Warhammer 40,000 ${preorder.title} has become available.`,
+          `A new preorder for Warhammer 40,000: ${preorder.title} has become available.`,
         )
         .setImage(`${preorder.image}?aff=6378bb243d570`)
         .setTimestamp()

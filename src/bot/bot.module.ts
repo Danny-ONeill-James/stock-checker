@@ -1,11 +1,10 @@
+import { DiscordModule } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { BotController } from './bot.controller';
-import { BotService } from './bot.service';
-import { DiscordModule } from '@discord-nestjs/core';
-import { BotGateway } from './bot.gateway';
-import { PreordersService } from 'src/preorders/preorders.service';
 import { PreordersModule } from 'src/preorders/preorders.module';
+import { BotController } from './bot.controller';
+import { BotGateway } from './bot.gateway';
+import { BotService } from './bot.service';
 
 @Module({
   imports: [
