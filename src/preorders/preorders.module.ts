@@ -8,5 +8,6 @@ import { PreordersService } from './preorders.service';
   imports: [TypeOrmModule.forFeature([PreorderEntity])],
   providers: [PreordersService],
   controllers: [PreordersController],
+  exports: [PreordersService],
 })
 export class PreordersModule {}
