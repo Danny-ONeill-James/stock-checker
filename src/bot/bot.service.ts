@@ -51,7 +51,7 @@ export class BotService {
     }
   }
 
-  async HourlyCheck(game: string) {
+  async checkForNewMessages(game: string) {
     console.log('Hourly Check');
     const newPreorders: IPreorder[] =
       await this.CheckDatabaseForNewPreordersForGame(game);

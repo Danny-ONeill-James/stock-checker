@@ -14,14 +14,6 @@ export class PreordersService {
     private preorderRepository: Repository<PreorderEntity>,
   ) {}
 
-  @Cron(CronExpression.EVERY_10_MINUTES, {
-    name: 'getPreordersCron',
-  })
-  async getPreordersCron() {
-    console.log('Run CronJob ', new Date());
-    await this.getFirestormPreorders();
-  }
-
   async getPreorders(): Promise<IPreorder[]> {
     const preorders: IPreorder[] = await this.preorderRepository.find({
       where: { deletedAt: IsNull() },
