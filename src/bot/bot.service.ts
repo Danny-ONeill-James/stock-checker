@@ -52,7 +52,6 @@ export class BotService {
   }
 
   async checkForNewMessages(game: string) {
-    console.log('Hourly Check');
     const newPreorders: IPreorder[] =
       await this.CheckDatabaseForNewPreordersForGame(game);
 
@@ -70,13 +69,11 @@ export class BotService {
   ): Promise<IPreorder[]> {
     const preorders: IPreorder[] =
       await this.preorderService.GetNewPreordersForGame(game);
-    console.log('Preorders: ', preorders);
     return preorders;
   }
 
   PostMessageToDiscord(preorders: IPreorder[]) {
     const WarhammerBuyAndSellChannel = process.env.DISCORD_GUILD_ID;
-    console.log('Channel Id: ', WarhammerBuyAndSellChannel);
 
     preorders.forEach((preorder) => {
       console.log('Will post: ', preorder.title);
@@ -105,8 +102,6 @@ export class BotService {
             'https://res.cloudinary.com/deftmtx9e/image/upload/v1676545362/More%20From%20Games/siteLogo/mark_dulotp.png',
         });
 
-      console.log('Embed: ', WarhammerPreorderEmbed);
-
       const channel = client.channels.cache.get(WarhammerBuyAndSellChannel);
       if (channel instanceof TextChannel) {
         channel.send({ embeds: [WarhammerPreorderEmbed] });
@@ -114,7 +109,5 @@ export class BotService {
 
       this.preorderService.updatePredorderHasBeenCommunicated(preorder.id);
     });
-
-    console.log('Posting to Discord', new Date());
   }
 }
