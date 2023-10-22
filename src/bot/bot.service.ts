@@ -1,9 +1,9 @@
+import { Channel } from '@discord-nestjs/core';
 import { Injectable } from '@nestjs/common';
-import { DiscoveryService } from '@nestjs/core';
-import { Client, GatewayIntentBits } from 'discord.js';
-import { PreorderEntity } from 'src/preorders/entities/preorder.entity';
+import { Client, EmbedBuilder, GatewayIntentBits } from 'discord.js';
 import { IPreorder } from 'src/preorders/interfaces/preorder.interface';
 import { PreordersService } from 'src/preorders/preorders.service';
+import 'dotenv/config';
 
 const client = new Client({
   intents: [
@@ -17,6 +17,36 @@ const client = new Client({
 export class BotService {
   constructor(private preorderService: PreordersService) {}
 
+  async onModuleInit() {
+    await this.startBot();
+  }
+
+  async onModuleDestroy() {
+    await this.logoutBot();
+  }
+
+  async startBot() {
+    try {
+      console.log('Start Bot Service');
+      await client.login(process.env.DISCORD_TOKEN);
+      client.on('ready', () => {
+        console.log(`Logged in as ${client.user.tag}!`);
+      });
+    } catch (error) {
+      console.error('Error starting the bot:', error);
+    }
+  }
+
+  async logoutBot() {
+    try {
+      console.log('Logging out the bot...');
+      await client.destroy();
+      console.log('Bot logged out successfully.');
+    } catch (error) {
+      console.error('Error logging out the bot:', error);
+    }
+  }
+
   async HourlyCheck(game: string) {
     console.log('Hourly Check');
     //Check Database for new preorders
@@ -24,8 +54,10 @@ export class BotService {
       await this.CheckDatabaseForNewPreordersForGame(game);
     //if there are new preorders, send a message to the discord channel
 
-    if (newPreorders) {
+    if (newPreorders.length >= 0) {
       this.PostMessageToDiscord(newPreorders);
+    } else {
+      console.log('No new preorders to post to Discord', new Date());
     }
 
     return newPreorders;
@@ -41,6 +73,47 @@ export class BotService {
   }
 
   PostMessageToDiscord(preorders: IPreorder[]) {
-    console.log('Posting to Discord');
+    let WarhammerBuyAndSellChannel = process.env.DISCORD_GUILD_ID;
+    console.log('Channel Id: ', WarhammerBuyAndSellChannel);
+
+    preorders.forEach((element) => {
+      console.log('Will post: ', element.title);
+
+      const WarhammerPreorderEmbed = new EmbedBuilder()
+        .setColor(0x0099ff)
+        .setTitle(element.title)
+        .setURL(
+          `https://firestormgames.co.uk${element.firestormLink}?aff=6378bb243d570`,
+        )
+
+        .setAuthor({
+          name: 'New Preorder Available',
+          iconURL:
+            'https://res.cloudinary.com/deftmtx9e/image/upload/v1676545362/More%20From%20Games/siteLogo/mark_dulotp.png',
+          url: 'https://morefromgames.com/',
+        })
+        .setDescription(
+          `A new preorder for Warhammer 40,000 ${element.title} has become available.`,
+        )
+        .setImage(`${element.image}?aff=6378bb243d570`)
+        .setTimestamp()
+        .setFooter({
+          text: 'Brought to you by MoreFromGames.com',
+          iconURL:
+            'https://res.cloudinary.com/deftmtx9e/image/upload/v1676545362/More%20From%20Games/siteLogo/mark_dulotp.png',
+        });
+
+      console.log('Embed: ', WarhammerPreorderEmbed);
+
+      client.channels.cache.get(WarhammerBuyAndSellChannel);
+      //.send({ embeds: [WarhammerPreorderEmbed] });
+    });
+
+    console.log(typeof client.channels.cache.get(WarhammerBuyAndSellChannel));
+    console.log(
+      client.channels.cache.get(WarhammerBuyAndSellChannel) instanceof Channel,
+    );
+
+    console.log('Posting to Discord', new Date());
   }
 }

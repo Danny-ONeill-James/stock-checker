@@ -9,4 +9,10 @@ export class BotController {
   check() {
     return this.botService.HourlyCheck('Warhammer 40,000');
   }
+
+  @Get('start')
+  start() {
+    console.log('Start Bot Controller');
+    return this.botService.startBot();
+  }
 }
