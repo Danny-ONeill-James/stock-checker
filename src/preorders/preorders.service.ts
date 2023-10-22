@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as cheerio from 'cheerio';
 import { IsNull, Repository } from 'typeorm';
@@ -13,14 +12,6 @@ export class PreordersService {
     @InjectRepository(PreorderEntity)
     private preorderRepository: Repository<PreorderEntity>,
   ) {}
-
-  @Cron(CronExpression.EVERY_10_MINUTES, {
-    name: 'getPreordersCron',
-  })
-  async getPreordersCron() {
-    console.log('Run CronJob ', new Date());
-    await this.getFirestormPreorders();
-  }
 
   async getPreorders(): Promise<IPreorder[]> {
     const preorders: IPreorder[] = await this.preorderRepository.find({
@@ -125,7 +116,7 @@ export class PreordersService {
     preorders.forEach(async (preorder) => {
       // Save the preorder entity to the database
       const createdPreorder = await this.preorderRepository.save(preorder);
-      console.log('Added Preorder: ', createdPreorder);
+      console.log('Added Preorder: ', createdPreorder.title);
     });
 
     return preorders;

@@ -1,12 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
-import { BotService } from './bot.service';
+import { Controller } from '@nestjs/common';
 
 @Controller('bot')
-export class BotController {
-  constructor(private botService: BotService) {}
-
-  @Get()
-  check() {
-    return this.botService.HourlyCheck('Warhammer 40,000');
-  }
-}
+export class BotController {}

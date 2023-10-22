@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { DiscordConfigService } from './bot/discord.config.services';
 import { PreordersModule } from './preorders/preorders.module';
 import { BotModule } from './bot/bot.module';
+import { SchedulerModule } from './scheduler/scheduler.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { BotModule } from './bot/bot.module';
     DiscordModule.forRootAsync({
       useClass: DiscordConfigService,
     }),
+    SchedulerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
