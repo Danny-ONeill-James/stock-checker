@@ -1,9 +1,13 @@
-import { Channel } from '@discord-nestjs/core';
 import { Injectable } from '@nestjs/common';
-import { Client, EmbedBuilder, GatewayIntentBits } from 'discord.js';
+import {
+  Client,
+  EmbedBuilder,
+  GatewayIntentBits,
+  TextChannel,
+} from 'discord.js';
+import 'dotenv/config';
 import { IPreorder } from 'src/preorders/interfaces/preorder.interface';
 import { PreordersService } from 'src/preorders/preorders.service';
-import 'dotenv/config';
 
 const client = new Client({
   intents: [
@@ -76,14 +80,14 @@ export class BotService {
     let WarhammerBuyAndSellChannel = process.env.DISCORD_GUILD_ID;
     console.log('Channel Id: ', WarhammerBuyAndSellChannel);
 
-    preorders.forEach((element) => {
-      console.log('Will post: ', element.title);
+    preorders.forEach((preorder) => {
+      console.log('Will post: ', preorder.title);
 
       const WarhammerPreorderEmbed = new EmbedBuilder()
         .setColor(0x0099ff)
-        .setTitle(element.title)
+        .setTitle(preorder.title)
         .setURL(
-          `https://firestormgames.co.uk${element.firestormLink}?aff=6378bb243d570`,
+          `https://firestormgames.co.uk${preorder.firestormLink}?aff=6378bb243d570`,
         )
 
         .setAuthor({
@@ -93,9 +97,9 @@ export class BotService {
           url: 'https://morefromgames.com/',
         })
         .setDescription(
-          `A new preorder for Warhammer 40,000 ${element.title} has become available.`,
+          `A new preorder for Warhammer 40,000 ${preorder.title} has become available.`,
         )
-        .setImage(`${element.image}?aff=6378bb243d570`)
+        .setImage(`${preorder.image}?aff=6378bb243d570`)
         .setTimestamp()
         .setFooter({
           text: 'Brought to you by MoreFromGames.com',
@@ -105,14 +109,11 @@ export class BotService {
 
       console.log('Embed: ', WarhammerPreorderEmbed);
 
-      client.channels.cache.get(WarhammerBuyAndSellChannel);
-      //.send({ embeds: [WarhammerPreorderEmbed] });
+      const channel = client.channels.cache.get(WarhammerBuyAndSellChannel);
+      if (channel instanceof TextChannel) {
+        channel.send({ embeds: [WarhammerPreorderEmbed] });
+      }
     });
-
-    console.log(typeof client.channels.cache.get(WarhammerBuyAndSellChannel));
-    console.log(
-      client.channels.cache.get(WarhammerBuyAndSellChannel) instanceof Channel,
-    );
 
     console.log('Posting to Discord', new Date());
   }
