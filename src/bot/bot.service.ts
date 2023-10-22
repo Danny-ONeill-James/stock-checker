@@ -113,6 +113,8 @@ export class BotService {
       if (channel instanceof TextChannel) {
         channel.send({ embeds: [WarhammerPreorderEmbed] });
       }
+
+      this.preorderService.updatePredorderHasBeenCommunicated(preorder.id);
     });
 
     console.log('Posting to Discord', new Date());

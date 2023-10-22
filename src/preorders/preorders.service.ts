@@ -130,4 +130,8 @@ export class PreordersService {
 
     return preorders;
   }
+
+  updatePredorderHasBeenCommunicated(id: string) {
+    return this.preorderRepository.update(id, { hasBeenCommunicated: true });
+  }
 }
