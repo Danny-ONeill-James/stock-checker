@@ -1,5 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
-import { PreordersService } from './preorders.service';
+import { Controller } from '@nestjs/common';
 
 @Controller('preorders')
 export class PreordersController {}
