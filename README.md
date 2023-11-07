@@ -44,6 +44,12 @@ $ yarn run start:dev
 $ yarn run start:prod
 ```
 
+### Debugging
+
+To allow use of the Scraper
+
+Send a get command to http://localhost:3000/preorders which will run the function to scrape
+
 ### Contributing
 
 Contributions are welcome!
