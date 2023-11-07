@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as cheerio from 'cheerio';
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { CreatePreorderDto } from './dtos/CreatePreorder.dto';
 import { PreorderEntity } from './entities/preorder.entity';
 import { IPreorder } from './interfaces/preorder.interface';
@@ -31,7 +31,7 @@ export class PreordersService {
 
   async GetNewPreordersForGame(game: string): Promise<IPreorder[]> {
     const newPreorders: IPreorder[] = await this.preorderRepository.find({
-      where: { hasBeenCommunicated: false, game },
+      where: { hasBeenCommunicated: false, game, image: Not(IsNull()) },
     });
 
     return newPreorders;
@@ -60,9 +60,8 @@ export class PreordersService {
         const firestormLink = preorderElement
           .find('a[itemprop="offers"]')
           .attr('href');
-        const image = preorderElement
-          .find('meta[itemprop="image"]')
-          .attr('content');
+
+        const image = preorderElement.find('class[lazy]').attr('style');
 
         const preorder: CreatePreorderDto = {
           title,
@@ -124,5 +123,37 @@ export class PreordersService {
 
   updatePredorderHasBeenCommunicated(id: string) {
     return this.preorderRepository.update(id, { hasBeenCommunicated: true });
+  }
+
+  async getImage() {
+    const nullImageItem: PreorderEntity[] = await this.preorderRepository.find({
+      where: { image: IsNull() },
+    });
+  }
+
+  async checkNextNullImage(game: string) {
+    const nullImageItem: PreorderEntity = await this.preorderRepository.findOne(
+      {
+        where: { image: IsNull(), game },
+      },
+    );
+
+    if (nullImageItem) {
+      const html = await fetch(
+        'https://www.firestormgames.co.uk/' + nullImageItem.firestormLink,
+        {
+          cache: 'no-store',
+        },
+      ).then((response) => response.text());
+
+      const $ = cheerio.load(html);
+
+      const image = $('meta[itemprop="image"]').attr('content');
+      console.log('Image: ', image);
+
+      if (image) {
+        await this.preorderRepository.update(nullImageItem.id, { image });
+      }
+    }
   }
 }
