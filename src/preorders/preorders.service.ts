@@ -130,4 +130,30 @@ export class PreordersService {
       where: { image: IsNull() },
     });
   }
+
+  async checkNextNullImage(game: string) {
+    const nullImageItem: PreorderEntity = await this.preorderRepository.findOne(
+      {
+        where: { image: IsNull(), game },
+      },
+    );
+
+    if (nullImageItem) {
+      const html = await fetch(
+        'https://www.firestormgames.co.uk/' + nullImageItem.firestormLink,
+        {
+          cache: 'no-store',
+        },
+      ).then((response) => response.text());
+
+      const $ = cheerio.load(html);
+
+      const image = $('meta[itemprop="image"]').attr('content');
+      console.log('Image: ', image);
+
+      if (image) {
+        await this.preorderRepository.update(nullImageItem.id, { image });
+      }
+    }
+  }
 }
