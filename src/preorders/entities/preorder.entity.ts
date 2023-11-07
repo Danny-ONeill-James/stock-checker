@@ -21,7 +21,7 @@ export class PreorderEntity {
   @Column()
   game: string;
 
-  @Column()
+  @Column({ nullable: true })
   image: string;
 
   @Column({ default: false })
